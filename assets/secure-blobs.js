@@ -1,0 +1,20 @@
+/* 加密数据：需输入口令才能解开（AES-GCM，PBKDF2-SHA256 600000 次）。不含任何明文姓名或令牌。 */
+window.BC_SECURE = {
+ "v": 1,
+ "kdf": {
+  "name": "PBKDF2",
+  "hash": "SHA-256",
+  "iterations": 600000,
+  "salt": "0jAMIfhZMMT4RApPK5Pncg=="
+ },
+ "items": {
+  "roster": {
+   "iv": "7by0v52VVWra54gZ",
+   "ct": "Ci11TM46p6HDJGZOWyQuDgqAqib2ctCyRaq18CgckttsbL4nsxEme92wkza+gn+irXc5+Ml2RepW4Y9GLkJHrpljflJG/AegcZktD+oPzFCsxCaTNoy7gTdeQtnxa1Tt77nA4rPRBlJgdLOG7L+nHicywif+Xv0MMgycI9RCdsLvHvhV6pjmyZqZWSoFefFhV7aMIG2NtjtM12zw+CTpeVXluJZ9Bh80pHhk5+t9U6/VQ4AmIJpf0qvduFdZnTVp/2V+l+HEYjWQJ4pzKzJDJkn5MGHwPGeHFIeoTNfIMUex2DaXDhkFdCWCtsp9W/DT2LmR+oF3tGxeHiW6GiCnnJ3tG2Jw/7I7BL/8dDSG+L/RMN1MDvTbFfpojgpUrVcqgmNJtwI4XvlZ/WeaSPYPQzc2jTB5g2SAtCgnYQ3QbpUFeZtJp0e8drwRb/9wxKs87TTcq+tnwKaipWCqxcagTw+SDYE+yLg36BcEtQelvbKDHarhs5jaYKDfygI1hBI4vhRQcXhFkpp1ca0C8c+1LcpibxZXoIR30eIz7qpt0oa2VUbKDRT4qa/3hDJi67SeRitZK1lnCbzSo/JxeTB6CSEeIL26Wte88xSMzS9id1XmX+K4w3SBPKn/untcJtXj/JJRmZQd5Xcrwy1qVtz7rRpBIg7xp7JQuOFVnb40z7gk/HVn6HfjbqkOCo0vceM2lTmjxfTLsr3PHxCjYbHElm9Gas3+FROmCkpnzOuANXoUiR1yxIFVHjESvKeYGGpmHoZWqLLJs0xasrv049eQ9Bjuf3ZgKg6sqFseCILQiuUQ12CGGzZvrrABUkUc4qPuJN0gQQ4oPLKcT1QoQwL7aH8kx8coNnWHgEjc0GkeeJ/TRYk/48EeV3VMJUQIqlaQzCFueS5iv7wD9dPsbcAcBBxTY+h1k8WgU90qe4WS4NXC2gF9hJO4KCnteSNZdneDLr/3WJVIRqg/co8/iISnc5QjAARTn4k0/cx8s9hkxa/n63jzXZ+yhzsWLFspD26bDkhNhfNgxEU2JJHKIKLxN9PqMUH6cIyP6cic9JFsjveI0R42clExc9krcjQGPXdkAqgIgDgl3RaP1on5lyonlyY3BJQo0znQaGmEI+WrlqnEz7c4XW7IZQaiuSYIqjBOz6pGNDR+ZFB9zzAt996jC0koewkalGEA2euYBwr1MWVkC3pRASrZrdzEyTMTCtt101opqvPNA2lt+KmGBCcNLhVXdDj3wqi6xSDRj2UD1uxwhDu/tGtAkRhk5jnQqElb1d4ZD/obawybaioWsh0dPRU8lSV6igD6Enl+PXcZPwngbhDXYR4Y4hoqMRbu9jUGmrG4q90acMwv/yzg7vSdkZbYf5ZJzTWRNmaeks03Lz/48mGet01sb+89rv7GKMnBOvvOYDx51/pQu1EXi8WmJL1Ej233VfIXY7okGZDJ+QPv68Pygn35ctqsZn/7LVpOimfx+gSLcOBKoaTQxwNmRmWjVoZupqcWAydkun1bVtXVwMX6SecTI2ABGyu7pgkFe1OAc4+NEa/VJpQRIlg/mIi8Ewx2FqWdvxcGoaqo6IjFLOxtrq5elJ1Tf8WAlDmA7DzoIB90Vrk9ZYLj4DH3lQPOC8ElB/tNaMo1r0jz58+EvAYog7yz95P61YTTQKcY3p6D7rnRFj/UIyWJCWZZ/WJriVmuz9XWLhyu9VxC+X1WAyLZWdFu17RdAP6wO9YJHXQ6y3nDtqTQ06OB/PQxNZqqGVKsq8CNvhj/hO9kEgapzMF+CjYuCPdogzP8SmebPnePK9wy11koiV7q1WYMEPPr6oLGoX9WnIMG2GCuhxDvrKXPOdUgpOxr2Js2Z2+nFviLSCZEyTaWPgeszX8yxWM50Gbn1TxQV7euxaDMcD8vfRJFeKO4a8SawdCSSb4cavHMfWZHT9PO+caFCA=="
+  },
+  "sync": {
+   "iv": "ebKvTI/lBYZMFtrL",
+   "ct": "VTOFPL8FTy7ccxvgf4OT6KO221ZIuhZEBCh5AZAdKvRlFF+VVWVTYPgByuRNrpCPTwUxBlc/pIh/igu5KBOXD8rxF4g/BJqb/zODbi5kMW6BuCyRfmssFR6bd6t6Iq0jITR/qHGul+eWFLtNfKF4+Qg6lHj8xJnXO55b5iBHo34tKG1D4Hg1n+ouRnWqLp1ZHQrjePDkjN/PYgSnUhyQ+y/2Qs3kerLo8QzP+5LtjzycGGpuAI5ejpO8M6in6lPmR73S5LtJbJt/fjnavwdpiZ7RAwc0cejVfiktHyt2qF3cg7Ug"
+  }
+ }
+};

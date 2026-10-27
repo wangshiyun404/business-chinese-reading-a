@@ -7,7 +7,7 @@
   var defaults = source.students.map(function (s) { return { id: String(s.id), name: s.name }; });
   var ids = defaults.map(function (s) { return s.id; });
   var NUMBERED = '当前使用学生编号。导入教师本机名单后，可在此浏览器显示姓名。';
-  var info = { mode: 'numbered', message: NUMBERED };
+  var info = { mode: 'numbered', message: NUMBERED }, last = { list: defaults, mode: 'numbered', message: NUMBERED };
 
   function validate(obj) {
     if (Array.isArray(obj)) obj = { format: FORMAT, students: obj };
@@ -34,8 +34,11 @@
   function apply(list, mode, message) {
     var names = Object.create(null);
     list.forEach(function (s) { names[s.id] = s.name; });
+    var unlocked = Array.isArray(window.BCSecureNames) ? window.BCSecureNames : null;
+    if (unlocked) unlocked.forEach(function (s) { if (s && s.id != null && typeof s.name === 'string' && s.name) names[String(s.id)] = s.name; });
     source.students.forEach(function (s) { s.name = names[String(s.id)]; });
-    info = { mode: mode, message: message };
+    last = { list: list, mode: mode, message: message };
+    info = unlocked ? { mode: 'unlocked', message: '已用口令解锁，显示真实姓名（' + ids.length + ' 人）。' } : { mode: mode, message: message };
     window.dispatchEvent(new Event('business:roster-change'));
   }
   function hydrate(raw) {
@@ -57,6 +60,7 @@
       apply(roster.students, 'local', '已导入并保存本机名单（' + ids.length + ' 人）。姓名仅保存在当前浏览器，不会上传。');
       return api.getInfo();
     },
+    refresh: function () { apply(last.list, last.mode, last.message); return api.getInfo(); },
     reset: function () {
       try {
         localStorage.removeItem(KEY);
@@ -96,7 +100,7 @@
     var status = box.querySelector('[data-local-roster="status"]');
     var file = box.querySelector('[data-local-roster="file"]');
     status.textContent = info.message;
-    box.querySelector('[data-local-roster="reset"]').disabled = info.mode !== 'local';
+    box.querySelector('[data-local-roster="reset"]').disabled = last.mode !== 'local';
     box.querySelector('[data-local-roster="import"]').addEventListener('click', function () { file.value = ''; file.click(); });
     file.addEventListener('change', function () {
       var f = file.files && file.files[0];
