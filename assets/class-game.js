@@ -74,7 +74,7 @@
     })();
     function openSession(g) { return g.sessions.find(function (s) { return !s.end && s.date === today(); }) || null; }
     function closeStale(g) { var n = 0; g.sessions.forEach(function (s) { if (!s.end && s.date !== today()) { s.end = s.log.length ? s.log[s.log.length - 1][0] : s.start; n++; } }); return n; }
-    function ensureSession(g) { closeStale(g); var s = openSession(g); if (!s) { s = { id: 's' + Date.now().toString(36), lesson: LESSON, date: today(), start: Date.now(), end: 0, log: [] }; g.sessions.push(s); lastEnded = null; } return s; }
+    function ensureSession(g) { closeStale(g); var s = openSession(g); if (s && s.lesson !== LESSON && !s.log.length) s.lesson = LESSON; if (!s) { s = { id: 's' + Date.now().toString(36), lesson: LESSON, date: today(), start: Date.now(), end: 0, log: [] }; g.sessions.push(s); lastEnded = null; } return s; }
     function pointsOf(list) { var m = {}; list.forEach(function (s) { s.log.forEach(function (e) { if (e[1]) m[e[1]] = (m[e[1]] || 0) + e[3]; }); }); return m; }
     function groupPts(s, n) { var a = []; for (var i = 0; i < n; i++) a.push(0); if (s) s.log.forEach(function (e) { if (e[2] >= 0 && e[2] < n) a[e[2]] += e[3]; }); return a; }
     function absentToday(g) { return g.picker.absentDate === today() ? g.picker.absent : []; }
@@ -114,7 +114,11 @@
     function lvQs(id) { return BANK.questions.filter(function (q) { return q.level === id; }); }
     function levels() { var all = BANK.levels.map(function (l) { return l.id; }); var s = (PR.levels || []).filter(function (id) { return all.indexOf(id) >= 0; }); return s.length ? s : all; }
     function buildSlides() { SL = []; if (!BANK) return; levels().forEach(function (id) { SL.push({ k: 'intro', lv: id }); BANK.questions.forEach(function (q, i) { if (q.level === id) SL.push({ k: 'q', lv: id, qi: i }); }); }); SL.push({ k: 'end' }); }
-    function lessonTitle(n) { var l = B.data.lessons[n - 1]; return l ? l.title : ''; }
+    function meta() { return (BANK && isO(BANK.lesson)) ? BANK.lesson : {}; }
+    function lessonTitle(n) { var m = n === LESSON ? meta() : {}; if (m.name) return String(m.name); var l = B.data.lessons[n - 1]; return l ? l.title : ''; }
+    function lessonNo(n) { var m = n === LESSON ? meta() : {}; return m.no ? String(m.no) : '第' + cn(n) + '课'; }
+    function ruleOf(id) { var r = meta().rules; return (isO(r) && r[id]) || (LV[id] && LV[id].rule) || RULES[id] || ''; }
+    function roleOf(q) { return q.role || (LESSON === 1 ? '面试官' : '情景'); }
     function cn(n) { return '一二三四五六七八九十'.charAt(n - 1) || String(n); }
 
     /* ---------- 声音 ---------- */
@@ -134,7 +138,7 @@
     function render() { renderTop(); renderStage(); renderCtrl(); renderBoard(); }
     function tint(hex) { var n = parseInt(hex.slice(1), 16), r = n >> 16, g = n >> 8 & 255, b = n & 255; r = Math.round(r + (255 - r) * 0.55); g = Math.round(g + (255 - g) * 0.55); b = Math.round(b + (255 - b) * 0.55); return 'rgb(' + r + ',' + g + ',' + b + ')'; }
     function renderTop() {
-      $('#cg-brand-t').textContent = '第' + cn(LESSON) + '课 ' + lessonTitle(LESSON);
+      $('#cg-brand-t').textContent = lessonNo(LESSON) + ' ' + lessonTitle(LESSON);
       $('#cg-brand-s').textContent = '课堂游戏 · ' + (current().prefs.mode === 'group' ? '个人＋小组积分' : '个人积分');
       var sl = VIEW === 'slide' ? SL[PR.pos] : null, p = $('#cg-prog'), tag = $('#cg-lvl'), pt = $('#cg-progtxt');
       p.innerHTML = BANK ? levels().map(function (id) { var n = lvQs(id).length, done = 0; if (sl && sl.lv) { var li = levels().indexOf(sl.lv), me = levels().indexOf(id); if (me < li) done = n; else if (me === li && sl.k === 'q') done = lvQs(id).indexOf(BANK.questions[sl.qi]) + 1; } else if (sl && sl.k === 'end') done = n; return '<div class="cg-seg"><i style="width:' + (n ? done / n * 100 : 0) + '%;background:' + tint(LV[id].color) + '"></i></div>'; }).join('') : '';
@@ -148,30 +152,36 @@
     function ansText(q, short) { if (q.type === 'mcq') return (short && q.options[q.answer].length > 12) ? LETTER[q.answer] : LETTER[q.answer] + '. ' + q.options[q.answer]; if (q.type === 'tf') return q.answer ? '对' : '错'; return q.reference || ''; }
     function PY() { return (BANK && BANK.py) || {}; }
     function renderStage() {
-      var st = $('#cg-stage');
+      var st = $('#cg-stage'); st.style.removeProperty('--u');
       if (VIEW === 'board') { st.innerHTML = boardHTML(); bindBoard(st); return; }
       if (VIEW === 'title' || !BANK) { st.innerHTML = titleHTML(); bindTitle(st); return; }
       var sl = SL[PR.pos];
-      if (sl.k === 'intro') { var lv = LV[sl.lv]; st.innerHTML = '<div class="cg-center cg-intro" style="--c:' + lv.color + '"><div class="cg-num">第 ' + (levels().indexOf(sl.lv) + 1) + ' 关 · 共 ' + lvQs(sl.lv).length + ' 题</div><h1>' + esc(lv.name) + '</h1><div class="cg-lead">' + esc(lv.sub || '') + '</div><div class="cg-rule">' + esc(lv.rule || RULES[sl.lv] || '') + '</div></div>'; return; }
-      if (sl.k === 'end') { st.innerHTML = endHTML(); bindBoard(st); return; }
+      if (sl.k === 'intro') { var lv = LV[sl.lv]; st.innerHTML = '<div class="cg-center cg-intro" style="--c:' + lv.color + '"><div class="cg-num">第 ' + (levels().indexOf(sl.lv) + 1) + ' 关 · 共 ' + lvQs(sl.lv).length + ' 题</div><h1>' + esc(lv.name) + '</h1><div class="cg-lead">' + esc(lv.sub || '') + '</div><div class="cg-rule">' + esc(ruleOf(sl.lv)) + '</div></div>'; fit(st); return; }
+      if (sl.k === 'end') { st.innerHTML = endHTML(); bindBoard(st); fit(st); return; }
       var q = BANK.questions[sl.qi], rv = !!PR.revealed[q.id], lvv = LV[q.level], no = lvQs(q.level).indexOf(q) + 1, py = PY();
-      var h = '<div class="cg-qhead"><span class="cg-qn" style="color:' + lvv.color + '">第 ' + no + ' 题</span><span class="cg-chip">' + ({ mcq: '选择', tf: '判断', open: '抢答', speak: '口语挑战' }[q.type] || '') + (q.scenario ? ' · 面试情景' : '') + '</span><span class="cg-src"><span class="cg-tag ' + (SRC_CLS[q.source] || '') + '">' + esc(q.source) + '</span> ' + esc(q.ref) + '</span></div>';
+      var h = '<div class="cg-qhead"><span class="cg-qn" style="color:' + lvv.color + '">第 ' + no + ' 题</span><span class="cg-chip">' + ({ mcq: '选择', tf: '判断', open: '抢答', speak: '口语挑战' }[q.type] || '') + (q.scenario ? ' · ' + esc(lvv.name) : '') + '</span><span class="cg-src"><span class="cg-tag ' + (SRC_CLS[q.source] || '') + '">' + esc(q.source) + '</span> ' + esc(q.ref) + '</span></div>';
       if (timeUp && !rv) h += '<div class="cg-timesup">时间到</div>';
       if (q.pinyin) h += '<div class="cg-vocab"><span class="cg-bigpy cg-py">' + esc(q.pinyin) + '</span><span class="cg-en cg-py">' + esc(q.en || '') + '</span><div class="cg-def">释义：' + esc(q.detail) + '</div></div>';
-      else if (q.scenario) h += '<div class="cg-scenario"><span class="cg-who">面试官</span><div class="cg-prompt cg-bubble ' + (q.prompt.length > 30 ? 'long' : '') + '">' + esc(q.prompt.replace(/^（面试官）/, '')) + '</div></div>';
+      else if (q.scenario) h += '<div class="cg-scenario"><span class="cg-who">' + esc(roleOf(q)) + '</span><div class="cg-prompt cg-bubble ' + (q.prompt.length > 30 ? 'long' : '') + '">' + esc(q.prompt.replace(/^（[^）]{1,10}）/, '')) + '</div></div>';
       else if (q.type === 'speak') { var pl = q.prompt.split('\n'); h += '<div class="cg-prompt ' + (pl[0].length > 30 ? 'long' : '') + '">' + esc(pl[0]) + '</div>' + (pl.length > 1 ? '<div class="cg-card">' + pl.slice(1).map(esc).join('<br>') + '</div>' : '') + '<div class="cg-words" style="--lc:' + lvv.color + '">' + (q.words || []).map(function (w) { return '<span>' + esc(w) + '<small class="cg-py">' + esc(py[w] || '') + '</small></span>'; }).join('') + '</div>'; }
       else h += '<div class="cg-prompt ' + (q.prompt.length > 34 ? 'long' : '') + '">' + esc(q.prompt) + '</div>';
       if (q.kw) h += '<div class="cg-kw">' + q.kw.map(function (k) { return '<span>' + esc(k[0]) + '<b class="cg-py">' + esc(k[1]) + '</b></span>'; }).join('') + '</div>';
       if (q.type === 'mcq') { var long = q.options.some(function (o) { return o.length > 12; }), cls = long ? 'one' : (q.options.length === 6 ? 'three' : ''); h += '<div class="cg-opts ' + cls + '">' + q.options.map(function (o, i) { return '<div class="cg-opt ' + (rv ? (i === q.answer ? 'right' : 'dim') : '') + '"><span class="cg-L">' + LETTER[i] + '</span><span>' + esc(o) + (rv && i === q.answer && q.level === 'L1' && py[o] ? ' <span class="cg-py cg-muted" style="font-size:.7em">' + esc(py[o]) + '</span>' : '') + '</span></div>'; }).join('') + '</div>'; }
       if (q.type === 'tf') h += '<div class="cg-tfrow"><div class="cg-tf ' + (rv ? (q.answer ? 'right' : 'dim') : '') + '">对 ✓</div><div class="cg-tf ' + (rv ? (!q.answer ? 'right' : 'dim') : '') + '">错 ✗</div></div>';
       h += '<div class="cg-explain ' + (rv ? '' : 'hide') + '"><span class="cg-ans">' + (q.type === 'mcq' || q.type === 'tf' ? '答案：' + esc(ansText(q, 1)) : '参考：' + esc(q.reference || '')) + '</span><br>' + esc(q.explain || '') + '</div>';
-      st.innerHTML = h;
+      st.innerHTML = h; fit(st);
+    }
+    /* 题目页自动缩放：内容（含未揭示的答案区）放不下时按比例缩小字号，避免出现滚动条 */
+    function fit(st) {
+      st.style.removeProperty('--u'); if (root.hidden) return;
+      var u = Math.min(innerWidth * 0.0125, innerHeight * 0.02), k = 0;
+      while (st.scrollHeight > st.clientHeight + 1 && k++ < 14) { u *= 0.93; st.style.setProperty('--u', u.toFixed(2) + 'px'); }
     }
     function lessonSelect() { return '<label class="cg-lsel">选择课次 <select id="cg-lesson">' + B.data.lessons.map(function (l) { return '<option value="' + l.id + '"' + (l.id === LESSON ? ' selected' : '') + '>第' + l.id + '课 ' + esc(l.title) + '</option>'; }).join('') + '</select></label>'; }
     function statusLine(g) { var ab = absentToday(g).length, open = openSession(g); return (g.prefs.mode === 'group' ? '个人＋小组积分（' + g.prefs.groupNames.length + ' 组）' : '个人积分') + ' · ' + IDS.length + ' 名学生' + (ab ? ' · 今日缺席 ' + ab + ' 人' : '') + (open ? ' · 本节课已开始计分' : ''); }
     function titleHTML() {
       var g = current();
-      var head = '<div class="cg-center"><div class="cg-eyebrow">商务汉语精读A · 课堂游戏</div><h1>第' + cn(LESSON) + '课　' + esc(lessonTitle(LESSON)) + '</h1>';
+      var head = '<div class="cg-center"><div class="cg-eyebrow">商务汉语精读A · 课堂游戏</div><h1>' + esc(lessonNo(LESSON)) + '　' + esc(lessonTitle(LESSON)) + '</h1>' + (meta().py || meta().en ? '<div class="cg-lpy"><span class="cg-py">' + esc(meta().py || '') + '</span>' + (meta().en ? ' · <span class="cg-py">' + esc(meta().en) + '</span>' : '') + '</div>' : '');
       if (BANK_STATE === 'loading') return head + '<div class="cg-lead">正在载入题目…</div></div>';
       if (!BANK) return head + '<div class="cg-lead">本课游戏制作中。可以先用随机抽人和积分榜，或选择其他课次。</div><div class="cg-btns">' + lessonSelect() + '<button class="cg-big ghost" data-a="lb">个人积分榜</button><button class="cg-big ghost" data-a="settings">设置</button></div><div class="cg-status">' + esc(statusLine(g)) + '</div></div>';
       var has = PR.started && PR.pos >= 0, total = levels().reduce(function (a, id) { return a + lvQs(id).length; }, 0);
@@ -183,7 +193,7 @@
     }
     function bindTitle(st) { var s = st.querySelector('#cg-lesson'); if (s) s.onchange = function () { openLesson(+s.value); }; }
     function progressLabel() { var sl = SL[PR.pos]; if (!sl) return ''; if (sl.k === 'end') return '已完成'; var lv = LV[sl.lv], i = levels().indexOf(sl.lv) + 1; return sl.k === 'intro' ? '第' + i + '关 ' + lv.name : '第' + i + '关 ' + lv.name + ' 第' + (lvQs(sl.lv).indexOf(BANK.questions[sl.qi]) + 1) + '题'; }
-    function endHTML() { return '<div class="cg-center"><div class="cg-eyebrow">第' + cn(LESSON) + '课 ' + esc(lessonTitle(LESSON)) + ' · 闯关结束</div><h1>今天的题目全部完成</h1><div class="cg-lead">查看积分榜；下课前点“本节课结束”，把今天的积分记入历史。</div><div class="cg-btns"><button class="cg-big" data-a="lb">个人积分榜</button><button class="cg-big ghost" data-a="endsession">本节课结束</button></div>' + (current().prefs.mode === 'group' ? groupRankHTML() : '') + '</div>'; }
+    function endHTML() { return '<div class="cg-center"><div class="cg-eyebrow">' + esc(lessonNo(LESSON)) + ' ' + esc(lessonTitle(LESSON)) + ' · 闯关结束</div><h1>今天的题目全部完成</h1><div class="cg-lead">查看积分榜；下课前点“本节课结束”，把今天的积分记入历史。</div><div class="cg-btns"><button class="cg-big" data-a="lb">个人积分榜</button><button class="cg-big ghost" data-a="endsession">本节课结束</button></div>' + (current().prefs.mode === 'group' ? groupRankHTML() : '') + '</div>'; }
     function groupRankHTML() { var g = current(), s = openSession(g), pts = groupPts(s, g.prefs.groupNames.length), mx = Math.max.apply(null, [1].concat(pts)); var order = pts.map(function (v, i) { return { v: v, i: i }; }).sort(function (a, b) { return b.v - a.v; }), rank = 0, prev = null; return '<div class="cg-rank">' + order.map(function (o, k) { if (o.v !== prev) { rank = k + 1; prev = o.v; } return '<div class="cg-rk"><span class="p">' + rank + '</span><span class="n" style="color:' + COLORS[o.i] + '">' + esc(g.prefs.groupNames[o.i]) + '</span><span class="b"><i style="width:' + Math.max(0, o.v) / mx * 100 + '%;background:' + COLORS[o.i] + '"></i></span><span class="s">' + o.v + '</span></div>'; }).join('') + '</div>'; }
 
     /* ---------- 积分榜 ---------- */
@@ -379,6 +389,7 @@
       });
     }
     var prevFocus = null;
+    window.addEventListener('resize', function () { if (!root.hidden && VIEW === 'slide') renderStage(); });
     function open(n) {
       if (!n) { var st = B.getState(); n = st.lesson || 1; }
       if (W.closeModal) W.closeModal();
