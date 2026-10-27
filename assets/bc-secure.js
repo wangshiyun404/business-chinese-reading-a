@@ -255,7 +255,7 @@
     else if (kind === 'pending') { b.textContent = '有改动，稍后上传'; }
     else if (kind === 'offline') { b.className += ' warn'; b.textContent = dirty() ? '未同步，联网后自动上传' : '暂时连不上云端'; }
     else if (kind === 'error') { b.className += ' warn'; b.textContent = '云端暂时不可用，进度仍在这台电脑'; }
-    else if (meta.syncedAt) { b.className += ' ok'; b.textContent = '已同步 ' + hhmm(meta.syncedAt); }
+    else if (meta.syncedAt) { b.className += ' ok'; b.textContent = '已同步'; }
     else b.textContent = '云端同步已开启';
     b.title = '点一下立即同步';
   }
