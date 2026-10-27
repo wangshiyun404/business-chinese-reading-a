@@ -32,7 +32,7 @@
     if (!raw) return true;
     try { var d = JSON.parse(raw).data; return !d.bookmark && !Object.keys(d.records || {}).length && !Object.keys(d.overrides || {}).length &&
       !Object.keys(d.notes || {}).filter(function (k) { return d.notes[k]; }).length && !Object.keys((d.realLife || {}).answers || {}).length &&
-      !Object.keys((d.realLife || {}).checks || {}).length && !((d.picker || {}).drawn || []).length && !((d.picker || {}).excluded || []).length; }
+      !Object.keys((d.realLife || {}).checks || {}).length && !((d.picker || {}).drawn || []).length && !((d.picker || {}).excluded || []).length && !((d.games || {}).sessions || []).length; }
     catch (e) { return false; }
   }
 
