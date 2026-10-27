@@ -1,0 +1,7 @@
+.wb-character-avatar { background-image:url('characters/人物头像图集.png') !important; background-repeat:no-repeat !important; background-size:400% 300% !important; background-position:var(--avatar-x) var(--avatar-y) !important; border:1px solid #c5d3e2; box-shadow:0 2px 7px #17375416; overflow:hidden; }
+.bubble-row .wb-character-avatar { width:58px; height:58px; border-radius:50%; flex:none; }
+.pcard .wb-character-avatar { width:88px; height:88px; flex:none; border-radius:16px; }
+.pgrid { grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); }
+.wb-avatar-credit { color:#667992; font-size:calc(12px * var(--reading-scale,1.3)); }
+#wb-role-portrait { margin:0 auto 10px; width:96px; height:96px; border-radius:50%; }
+@media(max-width:720px){.pgrid{grid-template-columns:1fr}.bubble-row .wb-character-avatar{width:48px;height:48px}.pcard .wb-character-avatar{width:72px;height:72px}}

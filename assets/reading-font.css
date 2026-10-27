@@ -1,0 +1,108 @@
+/* Textbook reading scale. Interface controls keep their own fixed sizes. */
+:root { --reading-scale:1.3; }
+#main { overflow-anchor:none; }
+#main .section, #main .cover, #main .pgrid, #main .vtab,
+#main .lesson-grid { font-size:calc(16px * var(--reading-scale)); }
+#main .cover-card h1 { font-size:calc(34px * var(--reading-scale)); }
+#main .cover-card .en { font-size:calc(13px * var(--reading-scale)); }
+#main .cover-card .meta { font-size:calc(14px * var(--reading-scale)); }
+#main .cover-card .tag { font-size:calc(12px * var(--reading-scale)); }
+#main .lcard .lnum { font-size:calc(12px * var(--reading-scale)); }
+#main .lcard .ltitle { font-size:calc(19px * var(--reading-scale)); }
+#main .lcard .lmeta { font-size:calc(12px * var(--reading-scale)); }
+#main .lesson-head .kicker { font-size:calc(13px * var(--reading-scale)); }
+#main .lesson-head h2 { font-size:calc(32px * var(--reading-scale)); }
+#main .lesson-head .en { font-size:calc(13px * var(--reading-scale)); }
+#main .sec-title { font-size:calc(18px * var(--reading-scale)); flex-wrap:wrap; }
+#main .sec-title .part-tag { font-size:calc(11px * var(--reading-scale)); }
+#main .qcard .qtext { font-size:calc(16.5px * var(--reading-scale)); }
+#main .qcard .qhint { font-size:calc(12px * var(--reading-scale)); }
+#main .qcard .qnum { font-size:calc(16px * var(--reading-scale)); width:1.9em; height:1.9em; }
+#main .key-s { font-size:calc(19px * var(--reading-scale)); }
+#main .dlg-intro { font-size:calc(14.5px * var(--reading-scale)); }
+#main .rolebar, #main .rolechip { font-size:calc(13px * var(--reading-scale)); }
+#main .bubble { min-width:0; }
+#main .bubble .who { font-size:calc(12px * var(--reading-scale)); }
+#main .bubble .text { font-size:calc(16px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .scene-line { font-size:calc(14px * var(--reading-scale)); }
+#main .scene-line span { display:inline-block; }
+#main .vface.front .vword { font-size:calc(26px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .vface.front .vpos { font-size:calc(12px * var(--reading-scale)); }
+#main .vface.front .vflip { font-size:calc(11px * var(--reading-scale)); position:static; align-self:flex-end; margin-top:10px; }
+#main .vface.back .vpinyin { font-size:calc(15px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .vface.back .vpinyin span { font-size:calc(12px * var(--reading-scale)) !important; }
+#main .vface.back .vdef { font-size:calc(12.5px * var(--reading-scale)); overflow:visible; display:block; -webkit-line-clamp:unset; -webkit-box-orient:initial; overflow-wrap:anywhere; }
+/* Both faces participate in the grid's intrinsic height; neither face is clipped. */
+#main .vgrid { grid-template-columns:repeat(auto-fill,minmax(min(100%,calc(230px * var(--reading-scale))),1fr)); align-items:stretch; }
+#main .vcard { height:auto; min-height:calc(144px * var(--reading-scale)); min-width:0; }
+#main .vcard-inner { display:grid; height:100%; }
+#main .vface { position:relative; inset:auto; grid-area:1 / 1; min-width:0; }
+#main .vface.front { justify-content:center; }
+#main .vface.back { justify-content:flex-start; }
+#main .vcard:not(.flipped) .vface.back { visibility:hidden; }
+#main .vcard.flipped .vface.front { visibility:hidden; }
+#main .vtools { font-size:calc(13px * var(--reading-scale)); flex-wrap:wrap; }
+#main .lp-head { font-size:calc(15.5px * var(--reading-scale)); }
+#main .lp-head .lpnum { font-size:calc(13px * var(--reading-scale)); width:2em; height:2em; }
+#main .lp-head .lps { min-width:0; overflow-wrap:anywhere; }
+#main .lp-head .arrow { font-size:12px; }
+#main .lp-body .exp, #main .lp-body .ex-list .ex { font-size:calc(14.5px * var(--reading-scale)); }
+#main .lp-body .ex-list .ex::before { font-size:calc(11px * var(--reading-scale)); }
+#main .lp-body .extra { font-size:calc(13.5px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .kewen-card h3 { font-size:calc(24px * var(--reading-scale)); }
+#main .kewen-card p { font-size:calc(16.5px * var(--reading-scale)); }
+#main .ex-title { font-size:calc(16px * var(--reading-scale)); }
+#main .ex-type { font-size:calc(11px * var(--reading-scale)); }
+#main .ex-score { font-size:calc(12.5px * var(--reading-scale)); }
+#main .ex-intro { font-size:calc(13.5px * var(--reading-scale)); }
+#main .ex-q { font-size:calc(15.5px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .jbtn { font-size:calc(15px * var(--reading-scale)); width:2.2em; height:2em; }
+#main .fb { font-size:calc(13px * var(--reading-scale)); }
+#main .opt-btn { font-size:calc(14.5px * var(--reading-scale)); max-width:100%; white-space:normal; text-align:left; overflow-wrap:anywhere; }
+#main .blank-sel { font-size:calc(15px * var(--reading-scale)); max-width:100%; }
+#main .bank .bw { font-size:calc(14.5px * var(--reading-scale)); }
+#main .bank > span:first-child:not(.bw) { font-size:calc(12px * var(--reading-scale)) !important; }
+#main .mitem { font-size:calc(15px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .match-wrap { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+#main .match-wrap + div { font-size:calc(12.5px * var(--reading-scale)) !important; }
+#main .ans-tag { font-size:calc(12.5px * var(--reading-scale)); }
+#main .ans-line { font-size:calc(13px * var(--reading-scale)); }
+#main .open-item .qt { font-size:calc(15px * var(--reading-scale)); min-width:0; overflow-wrap:anywhere; }
+#main .open-item .qn { font-size:calc(15px * var(--reading-scale)); }
+#main .book-table { font-size:calc(14.5px * var(--reading-scale)); min-width:calc(420px * var(--reading-scale)); }
+#main .book-table caption { font-size:calc(14px * var(--reading-scale)); }
+#main .book-table thead th { font-size:calc(14.5px * var(--reading-scale)); }
+#main .clip-title { font-size:calc(17px * var(--reading-scale)); letter-spacing:.25em; }
+#main .clip-line { font-size:calc(14.5px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .clip-blank { height:calc(37px * var(--reading-scale)); }
+#main .pcard .pname { font-size:calc(17px * var(--reading-scale)); }
+#main .pcard .prole { font-size:calc(12.5px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .pcard > div:last-child { min-width:0; }
+#main .vtab th { font-size:calc(13px * var(--reading-scale)); }
+#main .vtab td { font-size:calc(14px * var(--reading-scale)); overflow-wrap:anywhere; }
+#main .vtab .search { font-size:calc(15px * var(--reading-scale)); }
+#main .vtab table { min-width:calc(700px * var(--reading-scale)); }
+#main .reading-table-scroll { width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-inline:contain; border-radius:8px; -webkit-overflow-scrolling:touch; }
+#main .reading-table-scroll:focus-visible { outline:3px solid #c99426; outline-offset:3px; }
+#main .reading-table-scroll .book-table { margin:8px 0; }
+#btn-fs-value { min-width:66px; font-variant-numeric:tabular-nums; }
+#btn-fs-dec:disabled, #btn-fs-inc:disabled { opacity:.4; cursor:default; }
+@media (max-width:720px) {
+  #main .qcard { gap:10px; }
+  #main .qcard > div:last-child { min-width:0; }
+  #main .lp-body { padding-left:18px; padding-right:18px; }
+  #main .lp-head { padding-left:14px; padding-right:14px; gap:8px; }
+  #main .match-wrap { column-gap:14px; }
+  #main .pgrid, #main .lesson-grid { grid-template-columns:minmax(0,1fr); }
+  #main .kewen-card { padding:24px 18px; }
+  #main .cover-card { padding:28px 22px; }
+  #main .cover-card h1 { font-size:calc(27px * var(--reading-scale)); }
+  #main .clipbox { padding-left:16px; padding-right:16px; }
+}
+@media print {
+  #main .reading-table-scroll { overflow:visible; }
+  #main .vtab table, #main .book-table { min-width:0; }
+  #main .vcard-inner { transform:none !important; }
+  #main .vface.back { visibility:visible !important; transform:none; }
+  #main .vface.front { display:none; }
+}

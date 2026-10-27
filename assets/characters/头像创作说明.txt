@@ -1,0 +1,33 @@
+商务汉语精读工作台 · 人物头像创作说明
+
+制作方式：内置 image_gen 图像生成工具。
+用途：HTML 教学工作台人物头像 sprite atlas。
+说明：这些头像是为教学辅助创作的虚构人物示意图，不是教材原图，不表示真实人物身份，也不是本课程学生头像。除教材剧情中的王中23岁外，人物年龄感、五官与服装均属美术创作，不应作为教材事实。
+布局：4列 × 3行，等大方形单元格，按从左至右、从上至下读取。第12格为空背景。
+顺序：王中、高雷、张强、吴云；陈新、赵伟、李丽、李一冰；张畅、大卫、彼得、空白。
+一致性：同一教材人物在所有出现位置应使用同一头像。教材中的“张经理”须按上下文区分张强与张畅。
+图像仅进行文件复制保存，未裁剪、重绘或编程加工。
+
+最终提示词（英文原文）：
+
+Use case: illustration-story
+Asset type: one production sprite atlas image for a Chinese business-language textbook website, eleven fictional adult character avatars.
+Primary request: Create ONE perfectly regular 4-column by 3-row sprite atlas with twelve equal square cells, overall aspect ratio exactly 4:3 (e.g. 2048x1536). This is a single atlas asset, not separate images. There must be NO outer padding, NO gutters, NO frames, NO cell border lines, and NO text anywhere. Cell positions follow a precise quarter-width / third-height grid. Each of cells 1–11 contains ONE distinct adult person shown from chest up, centered at the exact horizontal center of their cell, same head scale throughout, head comfortably inside the cell with headroom, readable at a final avatar size of 56 px. Each portrait must remain fully within its own cell. Cell 12 is completely empty plain background.
+Scene/backdrop: the same completely flat pale blue-gray background in every cell.
+Style/medium: clean mature modern editorial illustration, softly shaded, warm natural expressions, polished restrained color, simplified forms, high visual clarity. Appropriate for university-age and adult learners; NOT children's cartoons, NOT photorealistic headshots. Neutral straight-on bust portraits.
+Characters in strict reading order, left to right then top to bottom:
+Cell 1 (row 1 column 1): Wang Zhong, fictional 23-year-old Chinese male new employee, short black hair, blue collared shirt, fresh youthful but clearly adult face.
+Cell 2 (row 1 column 2): Gao Lei, fictional middle-aged Chinese male deputy general manager, tidy black hair with some gray, dark navy business suit, mature confident face.
+Cell 3 (row 1 column 3): Zhang Qiang, fictional middle-aged Chinese male HR manager, dark rectangular eyeglasses, gray business suit, distinct broad face.
+Cell 4 (row 1 column 4): Wu Yun, fictional middle-aged Chinese adult sales manager, short black hair, muted slate-blue business jacket, clearly distinct facial features from the prior three.
+Cell 5 (row 2 column 1): Chen Xin, fictional middle-aged Chinese adult finance manager, dark eyeglasses, beige blazer, distinct thoughtful face.
+Cell 6 (row 2 column 2): Zhao Wei, fictional young adult Chinese male HR assistant, short black hair, green collared shirt, distinct gentle friendly face.
+Cell 7 (row 2 column 3): Li Li, fictional young adult Chinese female sales employee, shoulder-length black hair, white blouse with a blue neck scarf, natural professional expression.
+Cell 8 (row 2 column 4): Li Yibing, fictional mature Chinese adult partner-company general manager, neat black hair, dark teal business jacket, composed professional expression.
+Cell 9 (row 3 column 1): Zhang Chang, fictional Chinese adult advertising agency manager, slightly wavy black hair, brown jacket, distinct expressive friendly face.
+Cell 10 (row 3 column 2): David, fictional adult male overseas-business deputy general manager, brown hair, navy suit, warm natural face without caricature or stereotypes.
+Cell 11 (row 3 column 3): Peter, fictional adult male technical director, light-brown hair, round eyeglasses, open-collar shirt, warm natural face without caricature or stereotypes.
+Cell 12 (row 3 column 4): ABSOLUTELY EMPTY — only the same flat pale blue-gray background.
+Text: none.
+Hard constraints: exactly 4 equal columns and 3 equal rows, exactly eleven separate portraits and one empty lower-right cell, no words, no names, no letters, no numbers, no watermark, no logos, no scenery, no floating objects, no decorative borders. Do not merge faces or let any portrait cross its square cell. All people are fictional, not based on real individuals.
+

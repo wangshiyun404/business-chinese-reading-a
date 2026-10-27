@@ -1,0 +1,9 @@
+.DS_Store
+._*
+*本机名单*
+*学生名单*
+*backup*
+*备份*
+核验/
+node_modules/
+*.local-tmp
