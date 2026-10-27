@@ -1,0 +1,21 @@
+/* 生词高亮（2026-10-28 补充）。蓝/橙为色盲友好配色；另以实线/虚线下划线和加粗区分，投影仪上也清楚。 */
+mark.vhl { background: none; color: inherit; font-weight: inherit; padding: 0; border-radius: 3px; }
+body.vhl-on mark.vhl { font-weight: 700; cursor: help; padding: 0 .08em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body.vhl-on mark.vhl-d { background: #d6e6fb; color: #0b3a75; box-shadow: inset 0 -.14em 0 #1f5fbf; }
+body.vhl-on mark.vhl-k { background: #fde3c4; color: #6b3200; border-bottom: .14em dashed #c45f00; }
+body.vhl-on mark.vhl:hover, body.vhl-on mark.vhl:focus { filter: brightness(.94); }
+.vhl-legend { display: none; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px; color: #5a6478; margin: -4px 0 12px; }
+body.vhl-on .vhl-legend { display: flex; }
+.vhl-legend .vhl-sw { font-weight: 700; padding: 1px 8px; border-radius: 4px; }
+.vhl-legend .vhl-sw.vhl-d { background: #d6e6fb; color: #0b3a75; box-shadow: inset 0 -3px 0 #1f5fbf; }
+.vhl-legend .vhl-sw.vhl-k { background: #fde3c4; color: #6b3200; border-bottom: 3px dashed #c45f00; }
+.vhl-legend .vhl-tip { color: #8a94a6; font-size: 12px; }
+.vhl-pop { position: fixed; z-index: 9999; max-width: min(340px, calc(100vw - 16px)); background: #fff; border: 1px solid #d5dbe6; border-top: 4px solid #1f5fbf;
+  border-radius: 10px; box-shadow: 0 10px 30px rgba(20, 40, 80, .18); padding: 10px 14px; font-size: 14px; line-height: 1.7; color: #2c3e58; }
+.vhl-pop.vhl-pop-k { border-top-color: #c45f00; }
+.vhl-pop-w { font-size: 18px; font-weight: 700; }
+.vhl-pop-py { font-size: 14px; font-weight: 600; color: #1f5fbf; margin-left: 10px; }
+.vhl-pop-k .vhl-pop-py { color: #b35500; }
+.vhl-pop-pos { font-size: 12px; color: #8a94a6; }
+.vhl-pop-src { font-size: 11px; color: #a0a8b8; margin-top: 4px; }
+@media print { .vhl-pop, .vhl-legend .vhl-tip { display: none !important; } body.vhl-on mark.vhl { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
