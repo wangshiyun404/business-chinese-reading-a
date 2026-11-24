@@ -141,12 +141,6 @@
     font-weight: 500;
     color: var(--text);
   }
-  .dept-lead-tag {
-    display: inline-block;
-    margin-left: 4px;
-    color: var(--muted);
-    font-size: 12px;
-  }
   .dept-items {
     display: flex;
     flex-direction: column;
@@ -357,12 +351,12 @@
 <script>
   // ====== 数据区 ======
   const DEPTS = [
-    { id: 'prod', name: '生产部', py: 'shēngchǎnbù', lead: '刘建国', leadPy: 'Liú Jiànguó', fictional: true },
-    { id: 'rd', name: '研发部', py: 'yánfābù', lead: '林晓', leadPy: 'Lín Xiǎo', fictional: true },
-    { id: 'sales', name: '销售部', py: 'xiāoshòubù', lead: '吴云', leadPy: 'Wú Yún' },
-    { id: 'hr', name: '人力资源部', py: 'rénlì zīyuán bù', lead: '张强', leadPy: 'Zhāng Qiáng' },
-    { id: 'admin', name: '行政部', py: 'xíngzhèngbù', lead: '许静', leadPy: 'Xǔ Jìng', fictional: true },
-    { id: 'fin', name: '财务部', py: 'cáiwùbù', lead: '陈新', leadPy: 'Chén Xīn' }
+    { id: 'prod', name: '生产部', py: 'shēngchǎnbù' },
+    { id: 'rd', name: '研发部', py: 'yánfābù' },
+    { id: 'sales', name: '销售部', py: 'xiāoshòubù', lead: '吴经理', leadPy: 'Wú jīnglǐ' },
+    { id: 'hr', name: '人力资源部', py: 'rénlì zīyuán bù', lead: '张经理', leadPy: 'Zhāng jīnglǐ' },
+    { id: 'admin', name: '行政部', py: 'xíngzhèngbù' },
+    { id: 'fin', name: '财务部', py: 'cáiwùbù', lead: '陈经理', leadPy: 'Chén jīnglǐ' }
   ];
 
   const TASKS = [
@@ -510,10 +504,10 @@
       const box = document.createElement('div');
       box.className = 'dept-box';
       box.dataset.dept = d.id;
-      const leadTag = d.fictional ? '<span class="dept-lead-tag">情景设定</span>' : '';
+      const lead = d.lead ? `<div class="dept-lead">${d.lead}<span class="py">${d.leadPy}</span></div>` : '';
       box.innerHTML = `<div class="dept-title">
         ${d.name}<span class="py">${d.py}</span>
-        <div class="dept-lead">负责人：${d.lead}${leadTag}<span class="py">${d.leadPy}</span></div>
+        ${lead}
       </div><div class="dept-items"></div>`;
 
       box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
