@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3课《入职培训》课堂互动小游戏</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --accent: #f59e0b;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 顶部导航 */
+  header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .brand p { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tab-btn, .tool-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .tab-btn { background: rgba(255,255,255,0.18); color: #fff; }
+  .tab-btn.active { background: #fff; color: var(--primary-dark); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+  .tool-btn { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .tool-btn:hover { background: rgba(255,255,255,0.25); }
+  .tool-btn.on { background: var(--accent); border-color: var(--accent); color: #1e293b; }
+
+  /* 状态栏 */
+  .status-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+  }
+  .stats { display: flex; gap: 20px; font-weight: 600; }
+  .stats span strong { color: var(--primary); font-size: 18px; }
+  .hint-text { color: var(--muted); font-size: 14px; }
+
+  main {
+    flex: 1;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* 模式一：找部门 */
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .dept-box {
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .dept-box:hover, .dept-box.drag-over {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateY(-2px);
+  }
+  .dept-box.correct-flash {
+    border-color: var(--success);
+    background: var(--success-bg);
+  }
+  .dept-box.wrong-flash {
+    border-color: var(--danger);
+    background: var(--danger-bg);
+    animation: shake 0.35s;
+  }
+  .dept-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 8px;
+  }
+  .dept-title .py {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .dept-lead {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .dept-lead-tag {
+    display: inline-block;
+    margin-left: 4px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .dept-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .placed-chip {
+    background: var(--success-bg);
+    color: #166534;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .task-pool-wrap {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .pool-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .task-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .task-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s;
+    max-width: 280px;
+  }
+  .task-card:hover { border-color: var(--primary); background: #eff6ff; }
+  .task-card.selected {
+    border-color: var(--accent);
+    background: #fef3c7;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+  }
+  .task-card .py {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .hide-py .py { display: none !important; }
+
+  /* 模式二：生词消消乐 */
+  .round-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .round-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 2px solid var(--primary);
+    background: #fff;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .round-btn.active { background: var(--primary); color: #fff; }
+
+  .match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 14px;
+  }
+  .match-card {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    min-height: 105px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .match-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+  .match-card.zh { font-size: 26px; font-weight: 700; color: #0f172a; }
+  .match-card.en { font-size: 15px; font-weight: 600; color: #334155; }
+  .match-card .py { font-size: 13px; color: var(--muted); font-weight: 400; margin-top: 4px; }
+  .match-card.selected {
+    border-color: var(--accent);
+    background: #fef3c7;
+    transform: scale(1.03);
+  }
+  .match-card.matched {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: #166534;
+    opacity: 0.45;
+    pointer-events: none;
+    transform: scale(0.95);
+  }
+  .match-card.wrong {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+    animation: shake 0.35s;
+  }
+
+  /* 完成弹窗 */
+  .banner {
+    margin-top: 20px;
+    background: var(--success-bg);
+    border: 2px solid var(--success);
+    color: #14532d;
+    border-radius: 14px;
+    padding: 18px 24px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .banner button {
+    margin-top: 10px;
+    background: var(--success);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>第3课《入职培训》课堂小游戏</h1>
+    <p>新锐公司部门职能 &amp; 会话 13 个核心生词</p>
+  </div>
+  <div class="controls">
+    <button class="tab-btn active" id="tab-dept" onclick="switchMode('dept')">🏢 新员工找部门</button>
+    <button class="tab-btn" id="tab-vocab" onclick="switchMode('vocab')">🧩 生词消消乐</button>
+    <button class="tool-btn on" id="btn-py" onclick="togglePinyin()">拼音：开</button>
+    <button class="tool-btn on" id="btn-sound" onclick="toggleSound()">音效：开</button>
+    <button class="tool-btn" onclick="resetCurrent()">🔄 重新开始</button>
+  </div>
+</header>
+
+<div class="status-bar">
+  <div class="stats">
+    <span>得分：<strong id="score">0</strong></span>
+    <span>进度：<strong id="progress">0 / 12</strong></span>
+  </div>
+  <div class="hint-text" id="hint-text">提示：拖拽任务卡到对应部门，或先点击任务卡再点击部门。</div>
+</div>
+
+<main id="app">
+  <!-- 模式一：新员工找部门 -->
+  <section id="mode-dept">
+    <div class="dept-grid" id="dept-grid"></div>
+    <div class="task-pool-wrap">
+      <div class="pool-label">待分配的职场任务（剩余 <span id="remain-count">12</span> 项）：</div>
+      <div class="task-pool" id="task-pool"></div>
+    </div>
+    <div class="banner hidden" id="dept-win">
+      🎉 太棒了！所有新员工都准确找到了对应的部门！<br>
+      <button onclick="initDeptGame()">再来一局</button>
+    </div>
+  </section>
+
+  <!-- 模式二：生词消消乐 -->
+  <section id="mode-vocab" class="hidden">
+    <div class="round-bar">
+      <button class="round-btn active" id="r1-btn" onclick="initVocabGame(0)">第一轮（7组生词）</button>
+      <button class="round-btn" id="r2-btn" onclick="initVocabGame(1)">第二轮（6组生词）</button>
+    </div>
+    <div class="match-grid" id="match-grid"></div>
+    <div class="banner hidden" id="vocab-win">
+      🎉 本轮生词全部配对成功！<br>
+      <button id="next-round-btn" onclick="nextVocabRound()">进入下一轮</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ====== 数据区 ======
+  const DEPTS = [
+    { id: 'prod', name: '生产部', py: 'shēngchǎnbù', lead: '刘建国', leadPy: 'Liú Jiànguó', fictional: true },
+    { id: 'rd', name: '研发部', py: 'yánfābù', lead: '林晓', leadPy: 'Lín Xiǎo', fictional: true },
+    { id: 'sales', name: '销售部', py: 'xiāoshòubù', lead: '吴云', leadPy: 'Wú Yún' },
+    { id: 'hr', name: '人力资源部', py: 'rénlì zīyuán bù', lead: '张强', leadPy: 'Zhāng Qiáng' },
+    { id: 'admin', name: '行政部', py: 'xíngzhèngbù', lead: '许静', leadPy: 'Xǔ Jìng', fictional: true },
+    { id: 'fin', name: '财务部', py: 'cáiwùbù', lead: '陈新', leadPy: 'Chén Xīn' }
+  ];
+
+  const TASKS = [
+    { text: '制造近百种公司产品', py: 'zhìzào jìn bǎi zhǒng gōngsī chǎnpǐn', dept: 'prod' },
+    { text: '保证工厂按时完成生产任务', py: 'bǎozhèng gōngchǎng ànshí wánchéng shēngchǎn rènwu', dept: 'prod' },
+    { text: '负责新产品的设计与开发', py: 'fùzé xīn chǎnpǐn de shèjì yǔ kāifā', dept: 'rd' },
+    { text: '改进现有产品的技术性能', py: 'gǎijìn xiànyǒu chǎnpǐn de jìshù xìngnéng', dept: 'rd' },
+    { text: '负责产品的市场销售', py: 'fùzé chǎnpǐn de shìchǎng xiāoshòu', dept: 'sales' },
+    { text: '和客户打交道、谈合作订单', py: 'hé kèhù dǎ jiāodao, tán hézuò dìngdān', dept: 'sales' },
+    { text: '负责新员工的招聘工作', py: 'fùzé xīn yuángōng de zhāopìn gōngzuò', dept: 'hr' },
+    { text: '组织一年一度的新员工入职培训', py: 'zǔzhī yìnián yídù de xīn yuángōng rùzhí péixùn', dept: 'hr' },
+    { text: '负责安排公司的日常活动', py: 'fùzé ānpái gōngsī de rìcháng huódòng', dept: 'admin' },
+    { text: '制定公司的各项规章制度', py: 'zhìdìng gōngsī de gèxiàng guīzhāng zhìdù', dept: 'admin' },
+    { text: '介绍公司的薪资待遇和奖金', py: 'jièshào gōngsī de xīnzī dàiyù hé jiǎngjīn', dept: 'fin' },
+    { text: '统计公司每年超过1亿元的营业收入', py: 'tǒngjì gōngsī měinián chāoguò yī yì yuán de yíngyè shōurù', dept: 'fin' }
+  ];
+
+  const VOCAB_ROUNDS = [
+    [
+      { zh: '培训', py: 'péixùn', en: 'training; to train' },
+      { zh: '讲座', py: 'jiǎngzuò', en: 'lecture; seminar' },
+      { zh: '应付', py: 'yìngfu', en: 'to handle; cope with' },
+      { zh: '精彩', py: 'jīngcǎi', en: 'wonderful; brilliant' },
+      { zh: '结构', py: 'jiégòu', en: 'structure' },
+      { zh: '研发', py: 'yánfā', en: 'R&D (research & development)' },
+      { zh: '销售', py: 'xiāoshòu', en: 'sales; to sell' }
+    ],
+    [
+      { zh: '行政', py: 'xíngzhèng', en: 'administration' },
+      { zh: '开发', py: 'kāifā', en: 'to develop (products/tech)' },
+      { zh: '制定', py: 'zhìdìng', en: 'to formulate; draw up (rules)' },
+      { zh: '待遇', py: 'dàiyù', en: 'remuneration; pay & benefits' },
+      { zh: '奖金', py: 'jiǎngjīn', en: 'bonus' },
+      { zh: '投入', py: 'tóurù', en: 'to throw oneself into; invest' }
+    ]
+  ];
+
+  // ====== 状态与工具 ======
+  let currentMode = 'dept';
+  let showPinyin = true;
+  let soundOn = true;
+  let score = 0;
+
+  // 部门游戏状态
+  let selectedTaskIdx = null;
+  let deptSolved = 0;
+
+  // 消消乐状态
+  let vocabRound = 0;
+  let firstCard = null;
+  let lockBoard = false;
+  let vocabSolved = 0;
+
+  // 简易音效（离线 Web Audio API）
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playTone(type) {
+    if (!soundOn) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    if (type === 'ok') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.14);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.linearRampToValueAtTime(160, now + 0.18);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+  }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function togglePinyin() {
+    showPinyin = !showPinyin;
+    document.body.classList.toggle('hide-py', !showPinyin);
+    const btn = document.getElementById('btn-py');
+    btn.textContent = showPinyin ? '拼音：开' : '拼音：关';
+    btn.classList.toggle('on', showPinyin);
+  }
+
+  function toggleSound() {
+    soundOn = !soundOn;
+    const btn = document.getElementById('btn-sound');
+    btn.textContent = soundOn ? '音效：开' : '音效：关';
+    btn.classList.toggle('on', soundOn);
+  }
+
+  function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('tab-dept').classList.toggle('active', mode === 'dept');
+    document.getElementById('tab-vocab').classList.toggle('active', mode === 'vocab');
+    document.getElementById('mode-dept').classList.toggle('hidden', mode !== 'dept');
+    document.getElementById('mode-vocab').classList.toggle('hidden', mode !== 'vocab');
+    if (mode === 'dept') {
+      document.getElementById('hint-text').textContent = '提示：拖拽任务卡到对应部门，或先点击任务卡再点击部门。';
+      initDeptGame();
+    } else {
+      document.getElementById('hint-text').textContent = '提示：依次点击一张汉字卡片和对应的英文释义卡片进行配对。';
+      initVocabGame(0);
+    }
+  }
+
+  function resetCurrent() {
+    if (currentMode === 'dept') initDeptGame();
+    else initVocabGame(vocabRound);
+  }
+
+  function updateStatus(done, total) {
+    document.getElementById('score').textContent = score;
+    document.getElementById('progress').textContent = `${done} / ${total}`;
+  }
+
+  // ====== 模式一：新员工找部门 ======
+  let currentTasks = [];
+
+  function initDeptGame() {
+    score = 0;
+    deptSolved = 0;
+    selectedTaskIdx = null;
+    currentTasks = shuffle(TASKS).map(task => ({ ...task, done: false }));
+    document.getElementById('dept-win').classList.add('hidden');
+
+    const grid = document.getElementById('dept-grid');
+    grid.innerHTML = '';
+    DEPTS.forEach(d => {
+      const box = document.createElement('div');
+      box.className = 'dept-box';
+      box.dataset.dept = d.id;
+      const leadTag = d.fictional ? '<span class="dept-lead-tag">情景设定</span>' : '';
+      box.innerHTML = `<div class="dept-title">
+        ${d.name}<span class="py">${d.py}</span>
+        <div class="dept-lead">负责人：${d.lead}${leadTag}<span class="py">${d.leadPy}</span></div>
+      </div><div class="dept-items"></div>`;
+
+      box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+      box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+      box.addEventListener('drop', e => {
+        e.preventDefault();
+        box.classList.remove('drag-over');
+        const idx = e.dataTransfer.getData('text/plain');
+        if (idx !== '') checkDeptMatch(Number(idx), d.id, box);
+      });
+      box.addEventListener('click', () => {
+        if (selectedTaskIdx !== null) checkDeptMatch(selectedTaskIdx, d.id, box);
+      });
+      grid.appendChild(box);
+    });
+
+    renderTaskPool();
+    updateStatus(0, currentTasks.length);
+  }
+
+  function renderTaskPool() {
+    const pool = document.getElementById('task-pool');
+    pool.innerHTML = '';
+    let remain = 0;
+    currentTasks.forEach((t, idx) => {
+      if (t.done) return;
+      remain++;
+      const card = document.createElement('div');
+      card.className = 'task-card' + (selectedTaskIdx === idx ? ' selected' : '');
+      card.draggable = true;
+      card.innerHTML = `${t.text}<span class="py">${t.py}</span>`;
+      card.addEventListener('dragstart', e => {
+        selectedTaskIdx = idx;
+        e.dataTransfer.setData('text/plain', String(idx));
+      });
+      card.addEventListener('click', () => {
+        selectedTaskIdx = (selectedTaskIdx === idx) ? null : idx;
+        renderTaskPool();
+      });
+      pool.appendChild(card);
+    });
+    document.getElementById('remain-count').textContent = remain;
+  }
+
+  function checkDeptMatch(taskIdx, deptId, boxEl) {
+    const task = currentTasks[taskIdx];
+    if (!task || task.done) return;
+
+    if (task.dept === deptId) {
+      task.done = true;
+      selectedTaskIdx = null;
+      deptSolved++;
+      score += 10;
+      playTone('ok');
+      boxEl.classList.add('correct-flash');
+      setTimeout(() => boxEl.classList.remove('correct-flash'), 400);
+
+      const chip = document.createElement('div');
+      chip.className = 'placed-chip';
+      chip.textContent = '✓ ' + task.text;
+      boxEl.querySelector('.dept-items').appendChild(chip);
+
+      renderTaskPool();
+      updateStatus(deptSolved, currentTasks.length);
+      if (deptSolved === currentTasks.length) {
+        document.getElementById('dept-win').classList.remove('hidden');
+      }
+    } else {
+      score = Math.max(0, score - 2);
+      playTone('err');
+      boxEl.classList.add('wrong-flash');
+      setTimeout(() => boxEl.classList.remove('wrong-flash'), 400);
+      updateStatus(deptSolved, currentTasks.length);
+    }
+  }
+
+  // ====== 模式二：生词消消乐 ======
+  function initVocabGame(roundIdx) {
+    vocabRound = roundIdx;
+    score = 0;
+    vocabSolved = 0;
+    firstCard = null;
+    lockBoard = false;
+
+    document.getElementById('r1-btn').classList.toggle('active', roundIdx === 0);
+    document.getElementById('r2-btn').classList.toggle('active', roundIdx === 1);
+    document.getElementById('vocab-win').classList.add('hidden');
+
+    const words = VOCAB_ROUNDS[roundIdx];
+    const cards = [];
+    words.forEach((w, i) => {
+      cards.push({ id: i, type: 'zh', label: w.zh, py: w.py });
+      cards.push({ id: i, type: 'en', label: w.en, py: '' });
+    });
+
+    const grid = document.getElementById('match-grid');
+    grid.innerHTML = '';
+    shuffle(cards).forEach(c => {
+      const el = document.createElement('div');
+      el.className = `match-card ${c.type}`;
+      el.dataset.id = c.id;
+      el.dataset.type = c.type;
+      el.innerHTML = c.type === 'zh'
+        ? `${c.label}<span class="py">${c.py}</span>`
+        : `${c.label}`;
+      el.addEventListener('click', () => handleCardClick(el, words.length));
+      grid.appendChild(el);
+    });
+
+    updateStatus(0, words.length);
+  }
+
+  function handleCardClick(el, totalPairs) {
+    if (lockBoard || el.classList.contains('matched') || el === firstCard) return;
+
+    el.classList.add('selected');
+    if (!firstCard) {
+      firstCard = el;
+      return;
+    }
+
+    lockBoard = true;
+    const isMatch = (firstCard.dataset.id === el.dataset.id) && (firstCard.dataset.type !== el.dataset.type);
+
+    if (isMatch) {
+      playTone('ok');
+      score += 10;
+      vocabSolved++;
+      const a = firstCard, b = el;
+      setTimeout(() => {
+        a.classList.remove('selected');
+        b.classList.remove('selected');
+        a.classList.add('matched');
+        b.classList.add('matched');
+        firstCard = null;
+        lockBoard = false;
+        updateStatus(vocabSolved, totalPairs);
+        if (vocabSolved === totalPairs) {
+          const btn = document.getElementById('next-round-btn');
+          btn.textContent = vocabRound === 0 ? '进入第二轮（剩余6组）' : '重新玩第一轮';
+          document.getElementById('vocab-win').classList.remove('hidden');
+        }
+      }, 220);
+    } else {
+      playTone('err');
+      score = Math.max(0, score - 2);
+      const a = firstCard, b = el;
+      a.classList.add('wrong');
+      b.classList.add('wrong');
+      updateStatus(vocabSolved, totalPairs);
+      setTimeout(() => {
+        a.classList.remove('selected', 'wrong');
+        b.classList.remove('selected', 'wrong');
+        firstCard = null;
+        lockBoard = false;
+      }, 480);
+    }
+  }
+
+  function nextVocabRound() {
+    initVocabGame(vocabRound === 0 ? 1 : 0);
+  }
+
+  // 启动默认模式
+  initDeptGame();
+</script>
+</body>
+</html>

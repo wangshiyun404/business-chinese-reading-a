@@ -143,6 +143,16 @@ main { flex: 1; overflow-y: auto; padding: 0 0 80px; scroll-behavior: smooth; }
 .lesson-head .kicker { color: var(--accent); font-weight: 700; letter-spacing: 3px; font-size: 13px; }
 .lesson-head h2 { font-size: 32px; margin: 6px 0 4px; font-family: "Songti SC", serif; }
 .lesson-head .en { color: var(--ink-2); font-size: 13px; }
+.lesson-activity-entry { margin-top: 8px; }
+.lesson-activity { margin-bottom: 20px; }
+.lesson-activity-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.lesson-activity iframe {
+  display: block;
+  width: 100%;
+  height: clamp(460px, 76vh, 760px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
 
 .section { max-width: 900px; margin: 26px auto; padding: 0 26px; }
 .sec-title {
@@ -757,7 +767,9 @@ const BOOK_DATA = {"meta": {"book": "新商务汉语精读教程（上册）", "
     });
     h += "</div>";
     h += '<div class="lesson-head"><div class="kicker">教材内容 · 第' + CN_NUM[S.lesson] + "课 · LESSON " + (S.lesson + 1) + "</div>" +
-      "<h2>" + esc(L.title) + "</h2></div>";
+      "<h2>" + esc(L.title) + "</h2>";
+    if (L.id === 3) h += '<button type="button" class="wb-button lesson-activity-entry" data-sec="lx1">课堂互动</button>';
+    h += "</div>";
     if (S.lesson === 0) h += '<div class="rl-entry-banner"><div><strong>把这一课带进真实生活</strong><p>看招聘、讲经历、回消息，再完成自己的求职作品。教材内容与补充材料分开标注。</p></div><button type="button" class="wb-button wb-primary" data-open-reallife>进入真实场景 →</button></div>';
     h += '<div class="section" id="sec-body"></div>';
     main.innerHTML = h;
@@ -777,12 +789,22 @@ const BOOK_DATA = {"meta": {"book": "新商务汉语精读教程（上册）", "
     else if (key === "sc1" || key === "sc2") body.innerHTML = secTitle("生词（" + d.length + " 个）", key === "sc1" ? "对话部分" : "课文部分") + renderVocab(d);
     else if (key === "yyd1" || key === "yyd2") body.innerHTML = secTitle("语言点（" + d.length + " 个）", key === "yyd1" ? "对话部分" : "课文部分") + renderYyd(d);
     else if (key === "kewen") body.innerHTML = secTitle("课文", "课文部分") + renderKewen(d);
-    else if (key === "lx1" || key === "lx2") body.innerHTML = secTitle(key === "lx1" ? "课后练习" : "综合练习", key === "lx1" ? "对话部分" : "课文部分") + renderExercises(d);
+    else if (key === "lx1" || key === "lx2") {
+      body.innerHTML = secTitle(key === "lx1" ? "课后练习" : "综合练习", key === "lx1" ? "对话部分" : "课文部分") +
+        (L.id === 3 && key === "lx1" ? renderLesson3Activity() : "") + renderExercises(d);
+    }
     document.querySelectorAll(".subnav .chip").forEach(function (c) {
       c.classList.toggle("active", c.getAttribute("data-sec") === key);
     });
     main.scrollTop = 0;
     document.dispatchEvent(new CustomEvent("business-render"));
+  }
+
+  function renderLesson3Activity() {
+    var url = "assets/games/lesson03-onboarding.html";
+    return '<div class="lesson-activity">' +
+      '<div class="lesson-activity-actions"><a href="' + url + '" target="_blank" rel="noopener">新标签页打开游戏</a></div>' +
+      '<iframe src="' + url + '" title="第3课《入职培训》课堂互动小游戏" sandbox="allow-scripts"></iframe></div>';
   }
 
   function secTitle(t, part) {
@@ -791,8 +813,17 @@ const BOOK_DATA = {"meta": {"book": "新商务汉语精读教程（上册）", "
 
   main.addEventListener("click", function (e) {
     if (e.target.closest('[data-open-reallife]') && window.BusinessWorkbench) { window.BusinessWorkbench.go({view:'reallife',lesson:1,section:'scene',scroll:0,anchor:null,open:[]}); return; }
-    var chip = e.target.closest(".subnav .chip[data-sec]");
-    if (chip) { S.section = chip.getAttribute("data-sec"); renderSection(); return; }
+    var chip = e.target.closest(".subnav .chip[data-sec], .lesson-activity-entry");
+    if (chip) {
+      var section = chip.getAttribute("data-sec");
+      if (chip.classList.contains("lesson-activity-entry") && S.section === section) {
+        main.querySelector(".lesson-activity").scrollIntoView({ block: "nearest" });
+        return;
+      }
+      S.section = section;
+      renderSection();
+      return;
+    }
     var lc = e.target.closest(".lcard");
     if (lc) { S.view = "lesson"; S.lesson = +lc.getAttribute("data-lesson"); S.section = "daodu"; render(); return; }
   });
